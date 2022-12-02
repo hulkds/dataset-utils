@@ -164,4 +164,7 @@ if __name__ == '__main__':
 
     data_dir = 'data_smoke_only_split/data_smoke_split/val'
 
+    id_to_class_name_mapping = {0: 'smoke',
+                               1: 'fire'}
+
     convert_to_voc_xml('data_smoke_only_split/data_smoke_split/classes.txt', data_dir, 'data_smoke_only_split/data_smoke_split/val/xml')
