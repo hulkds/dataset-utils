@@ -69,95 +69,79 @@ def convert_to_voc_xml(id_to_class_name_mapping: dict, data_dir: str, vocxml_sav
 
     # loop all the txt annotation files     
     for file in tqdm(os.listdir(data_dir)):
-        if file.endswith(".jpg") or file.endswith('jpeg'):
+        if file.endswith(".jpg") or file.endswith('.jpeg'):
             # get the image file that match the annotation file
             image_file = file
             yolotxt_annotation_file = os.path.splitext(image_file)[0] + '.txt'
                 
             if not os.path.exists(data_dir + yolotxt_annotation_file):
-                os.unlink(data_dir + image_file)
-                continue
+                annotations = []
 
             else:
                 # get value from annotation file
                 annotations = get_yolotxt_annotation(data_dir + yolotxt_annotation_file)
 
-                # read image
-                orig_img = Image.open(data_dir + image_file)  # open the image
-                image_width = orig_img.width
-                image_height = orig_img.height
+            # read image
+            orig_img = Image.open(data_dir + image_file)  # open the image
+            image_width = orig_img.width
+            image_height = orig_img.height
 
-                # Start the XML file
-                xml_file = os.path.splitext(os.path.join(vocxml_save_dir, yolotxt_annotation_file))[0] + '.xml'
-                with open(xml_file, 'w') as f:
-                    f.write('<annotation>\n')
-                    f.write('\t<folder>XML</folder>\n')
-                    f.write('\t<filename>' + image_file + '</filename>\n')
-                    f.write('\t<path>' + os.getcwd() + os.sep + image_file + '</path>\n')
-                    f.write('\t<source>\n')
-                    f.write('\t\t<database>Unknown</database>\n')
-                    f.write('\t</source>\n')
-                    f.write('\t<size>\n')
-                    f.write('\t\t<width>' + str(image_width) + '</width>\n')
-                    f.write('\t\t<height>' + str(image_height) + '</height>\n')
-                    # assuming a 3 channel color image (RGB)
-                    f.write('\t\t<depth>3</depth>\n')
-                    f.write('\t</size>\n')
-                    f.write('\t<segmented>0</segmented>\n')
+            # Start the XML file
+            xml_file = os.path.splitext(os.path.join(vocxml_save_dir, yolotxt_annotation_file))[0] + '.xml'
+            with open(xml_file, 'w') as f:
+                f.write('<annotation>\n')
+                f.write('\t<folder>XML</folder>\n')
+                f.write('\t<filename>' + image_file + '</filename>\n')
+                f.write('\t<path>' + os.getcwd() + os.sep + image_file + '</path>\n')
+                f.write('\t<source>\n')
+                f.write('\t\t<database>Unknown</database>\n')
+                f.write('\t</source>\n')
+                f.write('\t<size>\n')
+                f.write('\t\t<width>' + str(image_width) + '</width>\n')
+                f.write('\t\t<height>' + str(image_height) + '</height>\n')
+                # assuming a 3 channel color image (RGB)
+                f.write('\t\t<depth>3</depth>\n')
+                f.write('\t</size>\n')
+                f.write('\t<segmented>0</segmented>\n')
 
-                    for annotation in annotations:
-                        # assign the variables
-                        class_number = int(annotation[0])
-                        try:
-                            object_name = id_to_class_name_mapping[class_number]
-                        except KeyError:
-                            print("Invalid id, must be from ", id_to_class_name_mapping.keys())
-                        x_yolo = float(annotation[1])
-                        y_yolo = float(annotation[2])
-                        yolo_width = float(annotation[3])
-                        yolo_height = float(annotation[4])
+                for annotation in annotations:
+                    # assign the variables
+                    class_number = int(annotation[0])
+                    try:
+                        object_name = id_to_class_name_mapping[class_number]
+                    except KeyError:
+                        print("Invalid id, must be from ", id_to_class_name_mapping.keys())
+                    x_yolo = float(annotation[1])
+                    y_yolo = float(annotation[2])
+                    yolo_width = float(annotation[3])
+                    yolo_height = float(annotation[4])
 
-                        # Convert Yolo Format to Pascal VOC format
-                        box_width = yolo_width * image_width
-                        box_height = yolo_height * image_height
-                        
-                        if int(x_yolo * image_width - (box_width / 2)) > 0:
-                            x_min = str(int(x_yolo * image_width - (box_width / 2)))
-                        else: 
-                            x_min = str(0)
+                    # Convert Yolo Format to Pascal VOC format
+                    box_width = yolo_width * image_width
+                    box_height = yolo_height * image_height
 
-                        if int(y_yolo * image_height - (box_height / 2)) > 0:
-                            y_min = str(int(y_yolo * image_height - (box_height / 2)))
-                        else:
-                            y_min = str(0)
+                    x_min = str(max(int(x_yolo * image_width - (box_width / 2)), 0))
+                    y_min = str(max(int(y_yolo * image_height - (box_height / 2)), 0))
+                    x_max = str(min(int(x_yolo * image_width + (box_width / 2)), image_width))
+                    y_max = str(min(int(y_yolo * image_height + (box_height / 2)), image_height))
 
-                        if int(x_yolo * image_width + (box_width / 2)) > image_width:
-                            x_max = str(image_width)
-                        else:
-                            x_max = str(int(x_yolo * image_width + (box_width / 2)))
+                    # write each object to the file
+                    f.write('\t<object>\n')
+                    f.write('\t\t<name>' + object_name + '</name>\n')
+                    f.write('\t\t<pose>Unspecified</pose>\n')
+                    f.write('\t\t<truncated>0</truncated>\n')
+                    f.write('\t\t<difficult>0</difficult>\n')
+                    f.write('\t\t<bndbox>\n')
+                    f.write('\t\t\t<xmin>' + x_min + '</xmin>\n')
+                    f.write('\t\t\t<ymin>' + y_min + '</ymin>\n')
+                    f.write('\t\t\t<xmax>' + x_max + '</xmax>\n')
+                    f.write('\t\t\t<ymax>' + y_max + '</ymax>\n')
+                    f.write('\t\t</bndbox>\n')
+                    f.write('\t</object>\n')
 
-                        if int(y_yolo * image_height + (box_height / 2)) > image_height:
-                            y_max = str(image_height)
-                        else:
-                            y_max = str(int(y_yolo * image_height + (box_height / 2)))
-
-                        # write each object to the file
-                        f.write('\t<object>\n')
-                        f.write('\t\t<name>' + object_name + '</name>\n')
-                        f.write('\t\t<pose>Unspecified</pose>\n')
-                        f.write('\t\t<truncated>0</truncated>\n')
-                        f.write('\t\t<difficult>0</difficult>\n')
-                        f.write('\t\t<bndbox>\n')
-                        f.write('\t\t\t<xmin>' + x_min + '</xmin>\n')
-                        f.write('\t\t\t<ymin>' + y_min + '</ymin>\n')
-                        f.write('\t\t\t<xmax>' + x_max + '</xmax>\n')
-                        f.write('\t\t\t<ymax>' + y_max + '</ymax>\n')
-                        f.write('\t\t</bndbox>\n')
-                        f.write('\t</object>\n')
-
-                    # Close the annotation tag once all the objects have been written to the file
-                    f.write('</annotation>\n')
-                    f.close()  # Close the file
+                # Close the annotation tag once all the objects have been written to the file
+                f.write('</annotation>\n')
+                f.close()  # Close the file
 
 
 if __name__ == '__main__':
