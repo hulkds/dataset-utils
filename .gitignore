@@ -1,3 +1,9 @@
+subset_to_test/
+datasets/
+env/
+folder/
+boobs_annotator/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
