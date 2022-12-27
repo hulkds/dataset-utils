@@ -1,8 +1,5 @@
 from sentence_transformers import SentenceTransformer, util
 from PIL import Image
-import glob
-import os
-import tqdm
 
 def cluster(images_list: str, sim_threshold: float, min_community_size: int, emb_batch_size: int, cluster_batch_size: int, size: int):
     """Function that find embed all image to the embedding spac, then try to regroup all the images that are closer than sim_threshold.

@@ -1,0 +1,7 @@
+matplotlib==3.6.2
+numpy==1.23.5
+opencv_python==4.6.0.66
+Pillow==9.3.0
+pycocotools==2.0.6
+sentence_transformers==2.2.2
+tqdm==4.64.1

@@ -41,7 +41,7 @@ yolotxt_to_vocxml.convert_to_voc_xml(id_to_class_name_mapping, data_dir, 'saved_
 # Image clustering
 
 ```python
-import image_similarity
+from ImageClustering import image_similarity
 
 img_list = list(glob.glob('../datasets/benchmark/images/*'))
 
