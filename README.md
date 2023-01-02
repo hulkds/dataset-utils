@@ -54,3 +54,4 @@ image_clusters, image_centroids, images_duplicate = image_similarity.cluster(img
 - [ ] annotation sanity check
 - [ ] dataset statistic
 - [ ] go through dataset
+- [ ] boobs annotator
