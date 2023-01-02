@@ -48,3 +48,8 @@ img_list = list(glob.glob('../datasets/benchmark/images/*'))
 image_clusters, image_centroids, images_duplicate = image_similarity.cluster(img_list, sim_threshold=0.93, min_community_size=1, 
                                                     emb_batch_size=64, cluster_batch_size=128, size=320)
 ```
+
+# TODO
+- [ ] annotation sanity check
+- [ ] dataset statistic
+- [ ] go through dataset
