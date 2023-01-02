@@ -50,6 +50,7 @@ image_clusters, image_centroids, images_duplicate = image_similarity.cluster(img
 ```
 
 # TODO
+- [ ] convert yolo to coco
 - [ ] annotation sanity check
 - [ ] dataset statistic
 - [ ] go through dataset
