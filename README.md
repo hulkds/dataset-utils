@@ -43,10 +43,11 @@ yolotxt_to_vocxml.convert_to_voc_xml(id_to_class_name_mapping, data_dir, 'saved_
 ```python
 from ImageClustering import image_similarity
 
-img_list = list(glob.glob('../datasets/benchmark/images/*'))
+images_dir = "data_neuroo/train/images/"
+images_path = sorted(os.listdir(images_dir))
 
-image_clusters, image_centroids, images_duplicate = image_similarity.cluster(img_list, sim_threshold=0.93, min_community_size=1, 
-                                                    emb_batch_size=64, cluster_batch_size=128, size=320)
+image_clusters, image_centroids, images_duplicate = image_similarity.cluster(root=images_dir, images_list=images_path,, sim_threshold=0.93,  
+                                                    min_community_size=1, emb_batch_size=64, cluster_batch_size=128, size=320)
 ```
 
 # TODO
