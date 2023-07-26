@@ -1,8 +1,18 @@
+#pylint: disable=missing-module-docstring, line-too-long, import-error, too-many-arguments 
+
 from PIL import Image
 from sentence_transformers import SentenceTransformer, util
 
 
-def cluster(root: str, images_list: str, sim_threshold: float, min_community_size: int, emb_batch_size: int, cluster_batch_size: int, size: int):
+def cluster(
+    root: str,
+    images_list: str,
+    sim_threshold: float,
+    min_community_size: int,
+    emb_batch_size: int,
+    cluster_batch_size: int,
+    size: int,
+):
     """Function that find embed all image to the embedding spac, then try to regroup all the images that are closer than sim_threshold.
     Returns only communities that are larger than min_community_size. To find duplicated images, set min_community_size to 1.
 
@@ -11,7 +21,7 @@ def cluster(root: str, images_list: str, sim_threshold: float, min_community_siz
         images_list (str): list of image files.
         sim_threshold (float): similarity threshold.
         min_community_size (int): minimum cluster size.
-        emb_batch_size (int): batch size when doing image embedding. 
+        emb_batch_size (int): batch size when doing image embedding.
         cluster_batch_size (int): batch size when doing image clustering.
         size (int): resize image to this size for doing image embedding.
 
@@ -19,18 +29,25 @@ def cluster(root: str, images_list: str, sim_threshold: float, min_community_siz
         list: list of image clusters.
         list: list of image centroids.
         list: list of duplicated images.
-    """    
+    """
     # load the CLIP model
-    model = SentenceTransformer('clip-ViT-B-32')
+    model = SentenceTransformer("clip-ViT-B-32")
 
     # get all images name
     print("Images:", len(images_list))
 
     # compute the image embedding
-    img_emb = model.encode([Image.open(root + filepath).resize((size, size)) for filepath in images_list], batch_size=emb_batch_size, convert_to_tensor=True, show_progress_bar=True)
+    img_emb = model.encode(
+        [Image.open(root + filepath).resize((size, size)) for filepath in images_list],
+        batch_size=emb_batch_size,
+        convert_to_tensor=True,
+        show_progress_bar=True,
+    )
 
     # get image indices cluster
-    imgs_indice_cluster = util.community_detection(img_emb, threshold=sim_threshold, min_community_size=min_community_size, batch_size=cluster_batch_size)
+    imgs_indice_cluster = util.community_detection(
+        img_emb, threshold=sim_threshold, min_community_size=min_community_size, batch_size=cluster_batch_size
+    )
 
     # get image cluster
     image_clusters = []
