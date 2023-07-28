@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sn
-from PIL import Image, ImageDraw
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[1]
@@ -22,7 +21,7 @@ from utils import Colors, xywh2xyxy
 
 colors = Colors()  # create instance for 'from utils.plots import colors'
 
-def plot_labels(labels: np.ndarray, names=Dict[int, str], save_dir=Path("")):
+def plot_labels_statistic(labels: np.ndarray, names=Dict[int, str], save_dir=Path("")):
     """plot the labels statistic.
 
     Args:
