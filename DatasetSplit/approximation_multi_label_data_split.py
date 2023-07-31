@@ -43,7 +43,7 @@ def create_one_hot_dataframe(data_dict: dict[str, list[str]]):
     return one_hot_df, class_count
 
 
-def approximation_multi_label_split(
+def split(
     labels_path: list[str], labels_dir: str, n_splits: int = 5, shuffle: bool = True, random_state: int = 1234
 ):
     """approximately split multi label data.
